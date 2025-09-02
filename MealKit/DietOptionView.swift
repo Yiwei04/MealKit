@@ -73,7 +73,6 @@ struct DietOptionView: View {
     DietOptionView()
 }
 
-// MARK: - Reusable card view for menu items
 struct MenuCard: View {
     let title: String     // Text label for the diet
     let color: Color      // Background color
