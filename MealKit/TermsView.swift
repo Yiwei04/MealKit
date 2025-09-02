@@ -45,7 +45,7 @@ struct TermsView: View {
                          7. Liability is limited to the amount paid for your order.
                          """)
                         .multilineTextAlignment(.leading)
-                        .foregroundStyle(.purple)
+                        .foregroundStyle(.green)
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 10)
@@ -57,10 +57,10 @@ struct TermsView: View {
                     Spacer()
                     
                     // Navigation link to continue to the app if user agrees
-                    NavigationLink(destination: ContentView()) {
+                    NavigationLink(destination: DietMenuView()) {
                         Text("Agree")
                             .font(.headline)
-                            .foregroundStyle(.purple)
+                            .foregroundStyle(.green)
                             .frame(width: 200, height: 50)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
