@@ -8,7 +8,7 @@
 import SwiftUI
 
 // View that displays a menu of diet options
-struct DietMenuView: View {
+struct DietOptionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
@@ -70,7 +70,7 @@ struct DietMenuView: View {
 }
 
 #Preview {
-    DietMenuView()
+    DietOptionView()
 }
 
 // MARK: - Reusable card view for menu items

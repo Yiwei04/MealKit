@@ -57,7 +57,7 @@ struct TermsView: View {
                     Spacer()
                     
                     // Navigation link to continue to the app if user agrees
-                    NavigationLink(destination: DietMenuView()) {
+                    NavigationLink(destination: DietOptionView()) {
                         Text("Agree")
                             .font(.headline)
                             .foregroundStyle(.green)
