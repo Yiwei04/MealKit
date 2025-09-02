@@ -29,10 +29,9 @@ struct KetoMealView: View {
             LazyVGrid(columns: columns, spacing: 16) {
                 // Each meal tile pushes a detail screen via the navigation stack.
                 ForEach(filteredMeals) { meal in
-                    NavigationLink(value: meal) {
+                    NavigationLink(destination: MealDetailView(meal: meal)) {
                         MealCardView(meal: meal)
                     }
-                    .accessibilityHint(Text("Opens details for \(meal.name)"))
                 }
             }
             .padding(16)
