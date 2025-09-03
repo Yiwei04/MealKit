@@ -5,7 +5,8 @@
 //  Purpose:
 //  --------
 //  Shopping cart screen. Lists cart lines with quantity steppers and remove,
-//  shows subtotal, and routes to CheckoutView. Optionally offers “Empty Cart”.
+//  shows subtotal, and routes to CheckoutView. Presents alerts for invalid
+//  quantity operations. Optional “Empty Cart” hook.
 //
 //  Created by Jeffery Wang on 3/9/2025.
 //
@@ -14,18 +15,20 @@ import SwiftUI
 
 struct CartView: View {
     @EnvironmentObject var cart: CartStore
+    @State private var cartError: AppError?   // <- for quantity/limit errors
 
     var body: some View {
         VStack {
             if cart.lines.isEmpty {
                 ContentUnavailableView("Your cart is empty",
                                        systemImage: "cart",
-                                       description: Text("Add meals"))
+                                       description: Text("Add meals from Keto or High Protein."))
                     .padding()
             } else {
                 List {
                     ForEach(cart.lines) { line in
                         HStack(alignment: .top, spacing: 12) {
+                            // Thumbnail (optional image)
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8).fill(.ultraThinMaterial)
                                     .frame(width: 60, height: 60)
@@ -47,12 +50,24 @@ struct CartView: View {
                                 Text(line.meal.price, format: .currency(code: cart.currencyCode))
                                     .font(.caption).foregroundColor(.secondary)
 
-                                // Quantity control
+                                // Quantity control with validation
                                 HStack {
                                     Stepper("Qty: \(line.quantity)") {
-                                        cart.setQuantity(for: line.id, quantity: line.quantity + 1)
+                                        do {
+                                            try cart.setQuantity(for: line.id, quantity: line.quantity + 1)
+                                        } catch let err as AppError {
+                                            cartError = err
+                                        } catch {
+                                            cartError = .invalidQuantity
+                                        }
                                     } onDecrement: {
-                                        cart.setQuantity(for: line.id, quantity: line.quantity - 1)
+                                        do {
+                                            try cart.setQuantity(for: line.id, quantity: line.quantity - 1)
+                                        } catch let err as AppError {
+                                            cartError = err
+                                        } catch {
+                                            cartError = .invalidQuantity
+                                        }
                                     }
                                     .labelsHidden()
 
@@ -73,7 +88,7 @@ struct CartView: View {
                 }
                 .listStyle(.insetGrouped)
 
-                // Footer with totals + checkout
+                // Footer with totals + checkout (and optional empty-cart)
                 VStack(spacing: 12) {
                     HStack {
                         Text("Subtotal")
@@ -91,21 +106,32 @@ struct CartView: View {
                             .foregroundColor(.white)
                     }
                     .padding(.horizontal)
-                    .padding(.bottom)
-                    
+
+                    // OPTIONAL: one-tap empty cart (comment out if not desired)
                     Button(role: .destructive) {
                         cart.clear()
                     } label: {
                         Text("Empty Cart")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(RoundedRectangle(cornerRadius: 12).fill(Color.red.opacity(0.8)))
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Color.red.opacity(0.85)))
                             .foregroundColor(.white)
                     }
+                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
             }
         }
         .navigationTitle("Cart")
+
+        // Error alert for cart operations
+        .alert("Cart issue",
+               isPresented: .constant(cartError != nil),
+               presenting: cartError) { _ in
+            Button("OK", role: .cancel) { cartError = nil }
+        } message: { err in
+            Text(err.localizedDescription)
+        }
     }
 }
 

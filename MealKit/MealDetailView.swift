@@ -18,6 +18,8 @@ struct MealDetailView: View, Hashable {
     func hash(into hasher: inout Hasher) { hasher.combine(meal.id) }
     @EnvironmentObject private var cart: CartStore
     @State private var showAdded = false
+    @State private var addError: AppError?
+    @State private var goToCart = false
 
     let meal: Meal
 
@@ -68,8 +70,14 @@ struct MealDetailView: View, Hashable {
                 }
 
                 Button {
-                    cart.add(meal) 
-                    showAdded = true
+                    do {
+                        try cart.add(meal)
+                        showAdded = true
+                    } catch let err as AppError {
+                        addError = err
+                    } catch {
+                        addError = .invalidQuantity
+                    }
                 } label: {
                     HStack {
                         Image(systemName: "cart.badge.plus")
@@ -95,18 +103,27 @@ struct MealDetailView: View, Hashable {
         )
         .navigationTitle("Meal details")
         .navigationBarTitleDisplayMode(.inline)
+        
         .toolbar {
             // Quick access to the cart from detail screen
-            NavigationLink(destination: CartView()) {
-                CartIcon()
-            }
+            NavigationLink(destination: CartView()) { CartIcon() }
         }
-        .alert("Added to cart", isPresented: $showAdded) {   
+
+        // Success alert after adding
+        .alert("Added to cart", isPresented: $showAdded) {
             Button("Keep browsing", role: .cancel) { }
-            // This pushes Cart on the same NavigationStack
-            NavigationLink("Go to Cart", destination: CartView())
+            Button("Go to Cart") { goToCart = true }
         } message: {
             Text("“\(meal.name)” has been added to your cart.")
+        }
+
+        // Error alert if add fails
+        .alert("Couldn’t add item",
+               isPresented: .constant(addError != nil),
+               presenting: addError) { _ in
+            Button("OK", role: .cancel) { addError = nil }
+        } message: { err in
+            Text(err.localizedDescription)
         }
     }
 }
