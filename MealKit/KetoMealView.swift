@@ -14,6 +14,7 @@ import SwiftUI
 struct KetoMealView: View {
     // Live search string bound to SwiftUI’s search UI.
     @State private var searchText: String = ""
+    @EnvironmentObject private var cart: CartStore
 
     // Returns either the whole set OR the filtered subset by name.
     private var filteredMeals: [Meal] {
@@ -41,9 +42,11 @@ struct KetoMealView: View {
         .searchable(text: $searchText,
                     placement: .navigationBarDrawer(displayMode: .always),
                     prompt: Text("Search meals"))
-        // Destination for the above `NavigationLink(value:)` calls.
-        .navigationDestination(for: Meal.self) { meal in
-            MealDetailView(meal: meal)
+        .toolbar {
+            // Quick access to the cart from Keto view
+            NavigationLink(destination: CartView()) {
+                CartIcon()
+            }
         }
         // On-brand gradient background
         .background(
@@ -57,4 +60,5 @@ struct KetoMealView: View {
 
 #Preview {
     NavigationStack { KetoMealView() }
+        .environmentObject(CartStore())
 }

@@ -1,6 +1,10 @@
 //  TermsView.swift
 //  MealKit
 //
+//  Purpose:
+//  --------
+//  Shows terms & conditions with video background. “Agree” navigates into the app flow (DietOptionView). Keeps UI simple and readable.
+//
 //  Created by Jeffery Wang on 2/9/2025.
 //
 
@@ -79,6 +83,7 @@ struct TermsView: View {
 }
 
 #Preview {
-    TermsView()
+    NavigationStack { TermsView() }
+        .environmentObject(CartStore())
 }
 

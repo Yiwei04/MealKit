@@ -2,6 +2,11 @@
 //  ContentView.swift
 //  MealKit
 //
+//  Purpose:
+//  --------
+//  Landing screen with looping video background and “Enter” CTA.
+//  Hosts the root NavigationStack and routes to TermsView.
+//
 //  Created by Jeffery Wang on 27/8/2025.
 //
 
@@ -66,4 +71,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(CartStore())
 }

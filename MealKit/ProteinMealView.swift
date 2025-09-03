@@ -14,6 +14,7 @@ import SwiftUI
 
 struct ProteinMealView: View {
     @State private var searchText: String = ""
+    @EnvironmentObject private var cart: CartStore
 
     private var filteredMeals: [Meal] {
         guard !searchText.isEmpty else { return MealSamples.highProtein }
@@ -39,6 +40,12 @@ struct ProteinMealView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Text("Search meals")
         )
+        .toolbar {
+            // Quick access to the cart from High Protein view
+            NavigationLink(destination: CartView()) {
+                CartIcon()
+            }
+        }
         .background(
             LinearGradient(colors: [.mint.opacity(0.5), .black],
                            startPoint: .top,
@@ -50,4 +57,5 @@ struct ProteinMealView: View {
 
 #Preview {
     NavigationStack { ProteinMealView() }
+        .environmentObject(CartStore())
 }

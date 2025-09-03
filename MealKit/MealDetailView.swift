@@ -16,6 +16,8 @@ import SwiftUI
 struct MealDetailView: View, Hashable {
     static func == (lhs: MealDetailView, rhs: MealDetailView) -> Bool { lhs.meal.id == rhs.meal.id }
     func hash(into hasher: inout Hasher) { hasher.combine(meal.id) }
+    @EnvironmentObject private var cart: CartStore
+    @State private var showAdded = false
 
     let meal: Meal
 
@@ -66,6 +68,8 @@ struct MealDetailView: View, Hashable {
                 }
 
                 Button {
+                    cart.add(meal) 
+                    showAdded = true
                 } label: {
                     HStack {
                         Image(systemName: "cart.badge.plus")
@@ -91,5 +95,23 @@ struct MealDetailView: View, Hashable {
         )
         .navigationTitle("Meal details")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // Quick access to the cart from detail screen
+            NavigationLink(destination: CartView()) {
+                CartIcon()
+            }
+        }
+        .alert("Added to cart", isPresented: $showAdded) {   
+            Button("Keep browsing", role: .cancel) { }
+            // This pushes Cart on the same NavigationStack
+            NavigationLink("Go to Cart", destination: CartView())
+        } message: {
+            Text("“\(meal.name)” has been added to your cart.")
+        }
     }
+}
+
+#Preview {
+    NavigationStack { MealDetailView(meal: MealSamples.keto.first!) }
+        .environmentObject(CartStore())
 }

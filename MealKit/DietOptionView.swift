@@ -2,6 +2,10 @@
 //  DietMenuView.swift
 //  MealKit
 //
+//  Purpose:
+//  --------
+//  Main menu of diet categories (Keto, High Protein, etc.). Each tile links to its respective meal grid screen. Inherits the parent NavigationStack.
+//
 //  Created by Jeffery Wang on 2/9/2025.
 //
 
@@ -10,12 +14,14 @@ import SwiftUI
 // View that displays a menu of diet options
 struct DietOptionView: View {
     var body: some View {
-        NavigationStack {
             ZStack {
                 // Background color fills entire screen
-                Rectangle()
-                    .fill(Color.green)
-                    .ignoresSafeArea()
+                LinearGradient(
+                    colors: [Color.darkgreen.opacity(0.8), Color.black],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
                 
                 VStack {
                     Spacer()
@@ -64,13 +70,11 @@ struct DietOptionView: View {
                 .padding()
             }
         }
-        // Hide back button on root for cleaner UI
-        .navigationBarBackButtonHidden(true)
     }
-}
 
 #Preview {
-    DietOptionView()
+    NavigationStack { DietOptionView() }
+        .environmentObject(CartStore())
 }
 
 struct MenuCard: View {
